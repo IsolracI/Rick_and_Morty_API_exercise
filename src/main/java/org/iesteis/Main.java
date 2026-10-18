@@ -1,17 +1,16 @@
 package org.iesteis;
 
-import org.iesteis.model.Response;
-import org.iesteis.model.ResultsItem;
 import tools.jackson.databind.ObjectMapper;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.Map;
-import java.util.Scanner;
+import org.iesteis.model.ResultsItem;
 import java.util.stream.Collectors;
+import java.net.http.HttpResponse;
+import org.iesteis.model.Response;
+import java.net.http.HttpRequest;
+import java.net.http.HttpClient;
+import java.io.IOException;
+import java.util.Scanner;
+import java.util.Map;
+import java.net.URI;
 
 public class Main {
     static HttpResponse<String> readAPIRest() {
@@ -37,30 +36,28 @@ public class Main {
     static void getCharactersStatus() {
         ObjectMapper mapper = new ObjectMapper();
         HttpResponse<String> response = readAPIRest();
-
         Response r = mapper.readValue(response.body(), Response.class);
+
         r.getResults().forEach(resultsItem -> System.out.println("Nombre: " + resultsItem.getName() + "\n\tEstado: " + resultsItem.getStatus() + "\n\tImagen: " + resultsItem.getImage()));
     }
 
     static void getOriginsDemographic() {
         ObjectMapper mapper = new ObjectMapper();
         HttpResponse<String> response = readAPIRest();
-
         Response r = mapper.readValue(response.body(), Response.class);
+
         Map<String, Long> personajesPais = r.getResults().stream()
                                                          .collect(Collectors.groupingBy(resultsItem -> resultsItem.getOrigin().getName(), Collectors.counting()));
-
         personajesPais.forEach((key, value) -> System.out.println("País: " + key + " --- cantindad de personajes: " + value));
     }
 
     static void getGenderDemographic() {
         ObjectMapper mapper = new ObjectMapper();
         HttpResponse<String> response = readAPIRest();
-
         Response r = mapper.readValue(response.body(), Response.class);
+
         Map<String, Long> personajesGenero = r.getResults().stream()
                                                            .collect(Collectors.groupingBy(ResultsItem::getGender, Collectors.counting()));
-
         personajesGenero.forEach((key, value) -> System.out.println("Género: " + key + " --- cantindad de personajes: " + value));
     }
 
@@ -69,15 +66,14 @@ public class Main {
         StringBuilder mensaje = new StringBuilder();
         boolean continuar = true;
 
-        mensaje.append("Eliga qué quiere hacer:\n");
+        mensaje.append("Elija qué quiere hacer:\n");
         mensaje.append("1: Mostrar los nombres de personajes junto a su estado e imagen.\n");
-        mensaje.append("2: Mostrar la demográfica de orígenes.\n");
-        mensaje.append("3: Mostrar la demográfica de géneros.\n");
+        mensaje.append("2: Mostrar cuantos personajes provienen de qué lugar.\n");
+        mensaje.append("3: Mostrar cuantos personajes son de qué género.\n");
         mensaje.append("4: Salir.\n");
         System.out.print(mensaje);
 
         while(continuar) {
-
             String userInput = scanner.nextLine();
 
             switch (userInput) {
